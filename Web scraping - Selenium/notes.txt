@@ -1,0 +1,345 @@
+Selenium is a powerful tool for controlling web broswers through programs and performing broswer automation. It is functional for all browsers, works on all major OS and its scripts are written in various languages i.e python, java, c# etc.
+
+-open source library -supports cross browsing(will work on various web broswers) -automates web applications
+
+selenium with python: Selenium can easily send standard commands of python to various broswers irrespective of all variations in the design of the browser.
+
+
+
+Locators:
+-Identify the web element
+-certain perform action on that element.
+
+Locators are addresses that identify a web element uniquely within the page.
+
+Types:
+1)Locators supported by selenium webdriver, which can be accessed as methods:
+-id, name, classname, tagname, linktext(text which href holds, not href link), partiallinktext
+
+Ex for linktext: <a href='link'>register</a>.....here register is linktext and specifing some portion of it...like 'reg' is partiallinktext.
+
+2)Customized locators:
+-CSS selectors....can be written in diff ways like:
+
+1) tag id    tagname#valueofid    input#email
+2) tag class tagname.classname    input.inputtext
+3) tag attribute  tagname[attribute=value]  input[placeholder=Email or phone number]
+4) tag class attribute  tagname.classname[attribute=value]  
+the step 4 is used when 2 elements have same tag and class but diff attribute values.
+
+-XPath(absolute XPath, relative XPath)
+
+Note** imp: XPath is used 70-80% of the times in automation compared to other locators.
+
+
+-XPath:
+
+-Xpath is defined as XML path
+-it is a syntax or language for finding any element on the web page using xml path expression.
+-XPath is used to find the location of any element on a  webpage using HTML DOM structure.
+-XPath can be used to navigate through elements and attributes in DOM.
+-XPath is an address of the element.
+
+DOM- Documeny Object model:
+-DOM is an API Interface provided by browser.
+-When a web page is loaded, the broswer creates a Document Object model of the page.
+
+
+Types of XPath:
+1) Absolute/Full XPath...... ex: /html/body/nav/div/div[2]/div[2]/ul/li[2]/a/button.......here we have index numbers as there are multiple divs and lists..
+2) Relative/partial XPath......ex: //*[@id="navbarSupportedContent"]/div[2]/ul/li[2]/a/button
+
+
+Diff between Absolute and relative xpaths:
+
+1) Absolute xpath starts from root html node
+   relative xpath directly jump to element on DOM.
+
+2) Absolute xpath starts with /
+   Relative xpath start with //
+
+3) In Absolute xpath we use only tags/nodes
+   In Relative xpath we use attributes.
+
+
+How to write xpaths manually:
+1)Absolute/full xpath:
+-always prefer going from bottom to top.
+/html/body/nav/div/div[2]/ul/li[1]/a
+
+2) Relative/partial xpath:
+syntax for writing relative path:
+//tagname[@attribute='value']
+
+//input[@id='shiva']
+
+instead of tag name we can use *
+//*[@id='shiva']...this will jump to every element which has id shiva
+
+
+How to capture xpath automatically:
+1) Firebug, firepath ---> firefox browser --->deprecated due to security reasons.
+2) right click -->inspect --> click on item --->copy---> copy xpath/fullxpath.
+3) SelectorsHub google chrome extension
+
+Note**: Among 2 xpaths....most of the times we use relative/partial xpath....
+why only relative xpath?
+
+-if developer introduce new element then absolute xpath will be broken.....hence relative xpath is more stabler than absolute xpath.
+-changing location of certain elements ...then absolute xpath will be broken.
+
+
+XPath options:
+and, or, contains(), start-with(), text()
+
+XPath with OR:
+-atleast one attribute should be matched...
+ex: driver.find_element(By.XPATH, "//input[@name='organization_name' or @placeholder = 'Organization']").send_keys('abc')
+
+XPath with AND:
+-both attributes should be matched....then only element will be found.
+ex: driver.find_element(By.XPATH, "//input[@name='organization_name' and @placeholder = 'Organization']").send_keys('abc')
+
+contains() and starts-with():
+ex: 
+id = start
+id = stop
+//*[contains(@id,st)]...it checks both cases contains 'st'....st can be anywhere in the word.
+//[starts-with(@id,'st')]....it checks both cases starts with'st'.
+//*[@id='start or @id = 'stop']
+These are the situations where we need to write our own xpath, capturing xpath automatically won't give us these...
+
+text(): it is uded to identify the element based on the innner text
+ex: <h1>Shiva</h1>
+driver.find_element(By.XPATH, "//a[text()='Shiva']").click()
+
+
+Xpath axes:using xpath axes we can traverse through the dom structure...top to bottom and bottom to top.
+****self, parent, child, ancestor, descendant, following, following-sibling, preceding, preceding-sibling.........see screenshot for syntaxes of each keyword
+
+
+Commands:
+1) application commands
+2) conditional commands
+3) broswer commands
+4) navigational commands
+5) wait commands
+
+application commands(access directly through driver instance):
+-get().... opens the application url...driver.get('https://....')
+-title.....to get title of page......driver.title
+-current_url......to get current url of page.....driver.current_url
+-page_source....to capture source code of the page.....driver.page_source
+
+Note: applications commands can only be used using driver instance..whereas conditional commands are used with web elements
+
+
+conditional commands(methods...belongs to webelements):
+is_displayed()....returns true if element is avaible on the page and false if not avaiable
+is_enabled()..... returns true if element is enabled to perform some action otherwise false
+is_selected()....returns true if radiobutton/checkboxes is selected...otherwise false..
+
+browser commands(access directly through driver instance)
+close()
+quit()
+
+diff between close and quit:
+-close() will close the window/broswer....but the process will be running in background....process will not be killed.
+-quit() will close the browser and kill the chrome driver process internally.
+
+-close() will close only 1 broswer window (where driver is focused)
+-quit() will close all the browser windows opened.
+
+
+Navigational commands(access directly through driver instance)
+-back()
+-forward()
+-refresh()
+
+
+
+find_element vs find_elements:
+-both uses locators
+-find_element(): returns single web element
+locator points to single web element and returns its value.
+locator can also point to multiple web elements but will only return 1st value of it.
+if locator doesnot found any element it will return no such element exception.
+
+-find_elements(): returns multiple web element.
+if locator is pointing to single web element...find_elements will return that element...but that is not returned as web element, instead list collection is returned. 
+Note**: so to access the element in it...we need to use List methods....list indexing.
+ex:
+elements = driver.find_elements(By.XPATH, "//input[@id='shiva']") #locator pointing to single element.
+print(len(elements)) #will return 1
+elements.send_keys(..) # we cannot do these...as it wont return a web element, instead returns a list...so use list indexing as below
+elements[0].send_keys('...')
+
+if locator is pointing to multiple web elements...all elements will be captured into a list.
+-need to access them using list indexing.
+if locator doesnot found any element...nothing is returned(excpetion will not be thrown).
+
+
+
+text vs get_attribute():
+text will capture the inner text of the element.....i.e text between the tags
+get_attribute('value') will capture the value of any attribute of that element.
+
+ex: <input id = 'mail' name ='xyz' value = 'abc@gmail.com'>Email:</input>
+here 'Email:' is the text
+abc@gmail.com will be captured by get_attribute('value') method.
+'mail' will be captured by get_attribute('id') method. 
+
+
+
+Note**:Enter key action on keyboard is performed by submit() method.
+
+
+Wait commands: These are used to solve synchronization problems(when script(python) gets executed even before the application gets loaded...ther will be no sync between application and our code.)
+
+types:
+-implicit wait
+-explicit wait
+
+1)implicit wait
+driver.implicitly_wait(10) #it is written at the start...it will work and applicable for the code(where synchronization problem occurs)  until the process is killed.
+writing it anywhere else in the code will make it work from there to end, but not from the start to end.
+note**: write it everytime after driver.get('url')
+
+diff between time.sleep and implicit wait:
+implicit wait for 10 sec...it will execeute even before the 10 sec if element is available, but time.sleep will wait for 10 sec and exceute only after 10 seconds. 
+
+disadv:
+if the element is not available within the time mentioned, still there is a chance of getting exception.
+
+
+note**: time.sleep(time)...disadvantages....1)performance of script is very poor 2) if the element is not available within the time mentioned, still there is a chance of getting exception.
+
+
+2) Explicit wait:
+
+Explicit wait works based on condition:
+WebDriverWait class is used
+from selenium.webdriver.support.ui import WebDriverWait #need to import these classes
+selenium.webdriver.support import expected_conditions as EC #need to import these classes
+
+wait = WebDriverWait(driver, 10) #explicit wait declaration
+wait.until(EC.presence_of_element_located((By.NAME, 'Email'))).send_keys('abc@gmail.com')
+
+Note: here time: 10 sec is used such that, in some cases when the condition is not met..i.e element is not present/a bug...then the process should not stop and move to next step...so process will be moved after the time mentioned by using 'ignored_exception' parameter , incase element is not present....
+
+another parameter: poll_frequency....(poll_frequency=2) for every 2 seconds...it will poll..i.e it will check if element is available...if available proceed..otherwise check again for 2 sec... for 10 sec...it will poll 5 times.
+This will make explicit wait faster..
+
+ex:
+wait = WebDriverWait(driver, 10,poll_frequency = 2, ignored_exceptions=[NoSuchElementException, ElementNotVisibleException, ElementNotSelectableException])
+
+
+
+Checkbox: see python file
+
+Links:
+1)internal link
+2)external link
+3)broken link
+
+#handling broken links (links which doesn't have target page)
+
+dropdown: see python file
+Note**: Most of the times we be select_by_visible_text
+
+
+practice: https://testautomationpractice.blogspot.com/
+
+
+
+
+How to handle alerts/popups:
+note**: As alerts and popups are not web elements we cannot access them directly using find_element or any other methods.
+we have sepecial command in driver...
+
+myalert = driver.switch_to.alert   #which switches to alert window.
+myalert.text #to capture text
+myalert.accept() #close the alert window by using OK button
+myalert.dismiss()  #close the alert window by using CANCEL button
+
+
+
+Authentication popup: where the popup asks for username and password to continue access the website....This popup is not part of our website/application....it is just to test whether you are right person or not to use the website.
+
+url: https://the-internet.herokuapp.com/basic_auth
+syntax: https://username:password@test.com
+ex: https://admin:admin@the-internet.herokuapp.com/basic_auth
+
+Note**: send_keys wont't work here....only way is to inject the username and password in the url.
+
+
+
+Frames/Iframes:
+
+driver.switch_to_frame()  #selenium 3
+
+#selenium 4.... changed _ to .
+switch_to.frame(name of the frame)
+switch_to.frame(id of the frame)
+switch_to.frame(webelement)
+switch_to.frame(0)
+
+driver.swicth_to.default_content()  #go back to main page
+
+#see screenhsot for code
+
+
+inner frames:
+driver.switch_to.parent_frame() # it will go directly to parent frame
+
+
+Switching between the browser windows:
+
+switch_to.window(WindowID)
+
+note**: windowID are not available in html...they are directly generated when a window opens.
+windowID'S are dynamic.
+
+To get windowID we have a command which we can access through driver instance:
+current_window_handle  ---> returns windowID of single browser window.
+window_handles ---> return window ID's of multiple broswer window.
+
+
+******practice alerts and window switching: https://testautomationpractice.blogspot.com/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
